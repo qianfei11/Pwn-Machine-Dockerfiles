@@ -23,7 +23,7 @@ bind r source-file ~/.tmux.conf \; display-message 'Config reloaded..'\n\
 unbind '\"'\n\
 bind - splitw -v -c '#{pane_current_path}'\n\
 unbind %\n\
-bind \\\\ splitw -h -c '#{pane_current_path}'\n\
+bind \\\\\\\\ splitw -h -c '#{pane_current_path}'\n\
 set -g mouse on\n\
 #set -g mouse-resize-pane on\n\
 #set -g mouse-select-pane on\n\
