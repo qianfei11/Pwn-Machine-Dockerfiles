@@ -1,10 +1,9 @@
 FROM ubuntu:16.04
 
 # update apt source
-#RUN sed -i -re 's/([a-z]{2}\.)?archive.ubuntu.com|security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-RUN apt-get clean && apt-get update && \
+RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal software-properties-common && \
-    echo "syntax enable\n\
+    echo -e "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
 set number\n\
@@ -18,7 +17,7 @@ set shiftwidth=4\n\
 set expandtab\n\
 set mouse=a\n\
 set clipboard=unnamedplus" > ~/.vimrc && \
-    echo "set-option -g default-shell /bin/zsh\n\
+    echo -e "set-option -g default-shell /bin/zsh\n\
 bind r source-file ~/.tmux.conf \; display-message 'Config reloaded..'\n\
 unbind '\"'\n\
 bind - splitw -v -c '#{pane_current_path}'\n\
@@ -70,32 +69,33 @@ RUN dpkg --add-architecture i386 && apt-get update && \
 
 # install ohmyzsh
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-    echo "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
+    echo -e "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
+    apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # pwntools
 RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python get-pip.py && rm -f get-pip.py && \
     python -m pip install --no-cache-dir pwntools ipython -U && \
-    echo "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
-    echo "[update]\ninterval=never" > ~/.pwn.conf && \
+    echo -e "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
+    echo -e "[update]\ninterval=never" > ~/.pwn.conf && \
+    apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ruby
 RUN apt-add-repository -y ppa:brightbox/ruby-ng && apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
     gem install one_gadget seccomp-tools && \
+    apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install gdb && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
     wget https://bootstrap.pypa.io/pip/3.5/get-pip.py && python3 get-pip.py && rm -f get-pip.py && \
     git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
     sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
+    apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV LANG C.UTF-8

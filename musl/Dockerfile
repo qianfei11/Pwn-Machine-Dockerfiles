@@ -1,8 +1,7 @@
-FROM ubuntu:18.04
+FROM alpine
 
-# update apt source
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal && \
+# update apk
+RUN apk update && apk add --no-cache bash gcc g++ musl-dev make cmake git tmux vim lxterminal && \
     echo -e "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
@@ -22,7 +21,7 @@ bind r source-file ~/.tmux.conf \; display-message 'Config reloaded..'\n\
 unbind '\"'\n\
 bind - splitw -v -c '#{pane_current_path}'\n\
 unbind %\n\
-bind \\ splitw -h -c '#{pane_current_path}'\n\
+bind \\\\\\\\ splitw -h -c '#{pane_current_path}'\n\
 set -g mouse on\n\
 #set -g mouse-resize-pane on\n\
 #set -g mouse-select-pane on\n\
@@ -48,54 +47,32 @@ setw -g window-status-current-format '#[fg=cyan, bold]*[#I] #W* '\n\
 setw -g window-status-format '#[fg=#ffffff, bold] [#I] #W '\n\
 setw -g automatic-rename off\n\
 setw -g allow-rename off" > ~/.tmux.conf && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# install environment
-RUN dpkg --add-architecture i386 && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    nasm python \
-    build-essential \
-    python-dev python-pip python-setuptools \
-    libc6-dbg \
-    libc6-dbg:i386 \
-    gcc-multilib g++-multilib \
-    gdb-multiarch \
-    glibc-source \
-    socat \
-    netcat && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 # install ohmyzsh
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
+RUN apk update && apk add --no-cache zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo -e "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 # pwntools
-RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python get-pip.py && rm -f get-pip.py && \
-    python -m pip install --no-cache-dir pwntools ipython -U && \
+RUN apk update && apk add --no-cache python3 py3-pip nasm socat netcat-openbsd python3-dev libffi-dev openssl-dev capstone && \
+    python3 -m pip install --no-cache-dir pip wheel setuptools unicorn -U && \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 python3 -m pip install --no-cache-dir pwntools ipython -U && \
     echo -e "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
     echo -e "[update]\ninterval=never" > ~/.pwn.conf && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 # ruby
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby ruby-dev && \
+RUN apk update && apk add --no-cache ruby ruby-dev && \
     gem install one_gadget seccomp-tools && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 # gdb plugin
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install gdb && \
-    git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
+RUN apk update && apk add --no-cache gdb && \
+    git clone https://github.com/longld/peda.git ~/peda && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
-    sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 ENV LANG C.UTF-8
 
