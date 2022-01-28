@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 # update apt source
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal && \
-    echo -e "syntax enable\n\
+    echo "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
 set number\n\
@@ -17,7 +17,7 @@ set shiftwidth=4\n\
 set expandtab\n\
 set mouse=a\n\
 set clipboard=unnamedplus" > ~/.vimrc && \
-    echo -e "set-option -g default-shell /bin/zsh\n\
+    echo "set-option -g default-shell /bin/zsh\n\
 bind r source-file ~/.tmux.conf \; display-message 'Config reloaded..'\n\
 unbind '\"'\n\
 bind - splitw -v -c '#{pane_current_path}'\n\
@@ -67,17 +67,17 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# install ohmyzsh
+# ohmyzsh
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-    echo -e "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
+    echo "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
     apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# pwntools
-RUN python3 -m pip install --no-cache-dir pwntools ipython -U && \
-    echo -e "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
-    echo -e "[update]\ninterval=never" > ~/.pwn.conf && \
+# pwntools (https://github.com/Gallopsled/pwntools/issues/1984#issuecomment-974645879)
+RUN python3 -m pip install --no-cache-dir pwntools==4.8.0b0 ipython -U && \
+    echo "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
+    echo "[update]\ninterval=never" > ~/.pwn.conf && \
     apt-get clean && apt-get autoclean && apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

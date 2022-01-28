@@ -49,16 +49,16 @@ setw -g automatic-rename off\n\
 setw -g allow-rename off" > ~/.tmux.conf && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
-# install ohmyzsh
+# ohmyzsh
 RUN apk update && apk add --no-cache zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo -e "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
-# pwntools
+# pwntools (https://github.com/Gallopsled/pwntools/issues/1984#issuecomment-974645879)
 RUN apk update && apk add --no-cache python3 py3-pip nasm socat netcat-openbsd python3-dev libffi-dev openssl-dev capstone && \
     python3 -m pip install --no-cache-dir pip wheel setuptools unicorn -U && \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1 python3 -m pip install --no-cache-dir pwntools ipython -U && \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 python3 -m pip install --no-cache-dir pwntools==4.8.0b0 ipython -U && \
     echo -e "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
     echo -e "[update]\ninterval=never" > ~/.pwn.conf && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
