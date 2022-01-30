@@ -48,7 +48,7 @@ setw -g window-status-current-format '#[fg=cyan, bold]*[#I] #W* '\n\
 setw -g window-status-format '#[fg=#ffffff, bold] [#I] #W '\n\
 setw -g automatic-rename off\n\
 setw -g allow-rename off" > ~/.tmux.conf && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install environment
@@ -64,14 +64,14 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     glibc-source \
     socat \
     netcat && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ohmyzsh
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # pwntools (https://github.com/Gallopsled/pwntools/issues/1984#issuecomment-974645879)
@@ -79,14 +79,14 @@ RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python get-pip.py && rm
     python -m pip install --no-cache-dir pwntools==4.8.0b0 ipython -U && \
     echo "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
     echo "[update]\ninterval=never" > ~/.pwn.conf && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ruby
 RUN apt-add-repository -y ppa:brightbox/ruby-ng && apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev && \
     gem install one_gadget seccomp-tools && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
@@ -95,7 +95,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install gdb && \
     git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
     sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
-    apt-get clean && apt-get autoclean && apt-get autoremove && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV LANG C.UTF-8
