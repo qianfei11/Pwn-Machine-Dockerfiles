@@ -93,11 +93,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb && \
     git clone https://github.com/hugsy/gef.git ~/gef && \
     python3 -m pip install --no-cache-dir keystone-engine ropper -U && \
     echo "source ~/gef/gef.py" > ~/.gdbinit && \
+    wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef-extras.sh | sh && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # pwninit
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y patchelf cargo libssl-dev liblzma-dev pkg-config && \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y patchelf cargo libssl-dev liblzma-dev pkg-config elfutils && \
     cargo install pwninit && \
     echo "\nexport PATH='$HOME/.cargo/bin:$PATH'\nalias pwninit='pwninit --template-path /etc/pwninit/exp.py --template-bin-name elf'" >> ~/.zshrc && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
