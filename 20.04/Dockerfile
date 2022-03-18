@@ -89,7 +89,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install gdb && \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb && \
     git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
     sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \

@@ -1,8 +1,8 @@
-FROM ubuntu:16.04
+FROM ubuntu
 
 # update apt source
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal software-properties-common && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal && \
     echo "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
@@ -22,7 +22,7 @@ bind r source-file ~/.tmux.conf \; display-message 'Config reloaded..'\n\
 unbind '\"'\n\
 bind - splitw -v -c '#{pane_current_path}'\n\
 unbind %\n\
-bind \\ splitw -h -c '#{pane_current_path}'\n\
+bind \\\\\\\\ splitw -h -c '#{pane_current_path}'\n\
 set -g mouse on\n\
 #set -g mouse-resize-pane on\n\
 #set -g mouse-select-pane on\n\
@@ -54,9 +54,9 @@ setw -g allow-rename off" > ~/.tmux.conf && \
 # install environment
 RUN dpkg --add-architecture i386 && apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    nasm python \
+    nasm python3 \
     build-essential \
-    python-dev python-pip python-setuptools \
+    python3-dev python3-pip python3-setuptools \
     libc6-dbg \
     libc6-dbg:i386 \
     gcc-multilib g++-multilib \
@@ -75,28 +75,35 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # pwntools (https://github.com/Gallopsled/pwntools/issues/1984#issuecomment-974645879)
-RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python get-pip.py && rm -f get-pip.py && \
-    python -m pip install --no-cache-dir pwntools==4.8.0b0 ipython -U && \
+RUN python3 -m pip install --no-cache-dir pwntools==4.8.0b0 ipython -U && \
     echo "\nalias objdump='objdump -M intel'\nexport PATH='$HOME/.local/bin:$PATH'" >> ~/.zshrc && \
     echo "[update]\ninterval=never" > ~/.pwn.conf && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ruby
-RUN apt-add-repository -y ppa:brightbox/ruby-ng && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev && \
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby ruby-dev && \
     gem install one_gadget seccomp-tools && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb && \
-    wget https://bootstrap.pypa.io/pip/3.5/get-pip.py && python3 get-pip.py && rm -f get-pip.py && \
-    git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
-    git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
-    sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
+    git clone https://github.com/hugsy/gef.git ~/gef && \
+    python3 -m pip install --no-cache-dir keystone-engine ropper -U && \
+    echo "source ~/gef/gef.py" > ~/.gdbinit && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# pwninit
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y patchelf cargo libssl-dev liblzma-dev pkg-config && \
+    cargo install pwninit && \
+    echo "\nexport PATH='$HOME/.cargo/bin:$PATH'\nalias pwninit='pwninit --template-path /etc/pwninit/exp.py --template-bin-name elf'" >> ~/.zshrc && \
+    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY ./exp.py /etc/pwninit/exp.py
 
 ENV LANG C.UTF-8
 
