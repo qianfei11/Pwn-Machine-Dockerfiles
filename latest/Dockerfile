@@ -89,10 +89,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb && \
-    git clone https://github.com/hugsy/gef.git ~/gef && \
-    python3 -m pip install --no-cache-dir keystone-engine ropper -U && \
-    echo "source ~/gef/gef.py" > ~/.gdbinit && \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb strace file && \
+    wget -O ~/.gdbinit-gef.py -q https://gef.blah.cat/dev && \
+    echo "source ~/.gdbinit-gef.py" >> ~/.gdbinit && \
+    python3 -m pip install --no-cache-dir keystone-engine ropper z3-solver -U && \
     wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef-extras.sh | sh && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
