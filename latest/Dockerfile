@@ -1,8 +1,9 @@
 FROM ubuntu
+ARG DEBIAN_FRONTEND=noninteractive
 
 # update apt source
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal && \
+    apt-get install -y vim tmux git make cmake lxterminal && \
     echo "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
@@ -52,8 +53,9 @@ setw -g allow-rename off" > ~/.tmux.conf && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install environment
-RUN dpkg --add-architecture i386 && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
     nasm python3 \
     build-essential \
     python3-dev python3-pip python3-setuptools \
@@ -68,7 +70,8 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ohmyzsh
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
+RUN apt-get update && \
+    apt-get install -y zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
@@ -83,22 +86,23 @@ RUN python3 -m pip install --no-cache-dir pwntools==4.8.0b0 ipython -U && \
 
 # ruby
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby ruby-dev && \
+    apt-get install -y ruby ruby-dev && \
     gem install one_gadget seccomp-tools && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb strace file && \
+RUN apt-get update && \
+    apt-get install -y gdb ltrace strace file && \
     wget -O ~/.gdbinit-gef.py -q https://gef.blah.cat/dev && \
     echo "source ~/.gdbinit-gef.py" >> ~/.gdbinit && \
     python3 -m pip install --no-cache-dir keystone-engine ropper z3-solver -U && \
-    wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef-extras.sh | sh && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # pwninit
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y patchelf cargo libssl-dev liblzma-dev pkg-config elfutils && \
+RUN apt-get update && \
+    apt-get install -y patchelf cargo libssl-dev liblzma-dev pkg-config elfutils && \
     cargo install pwninit && \
     echo "\nexport PATH='$HOME/.cargo/bin:$PATH'\nalias pwninit='pwninit --template-path /etc/pwninit/exp.py --template-bin-name elf'" >> ~/.zshrc && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
