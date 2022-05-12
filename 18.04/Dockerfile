@@ -93,20 +93,19 @@ RUN apt-get update && \
 
 # gdb
 RUN apt-get update && \
-    apt-get install -y ltrace strace texinfo python3 python3-dev libncurses-dev libmpfr-dev && \
+    apt-get install -y ltrace strace texinfo python-dev libncurses-dev libmpfr-dev && \
     wget https://ftp.gnu.org/gnu/gdb/gdb-9.2.tar.gz -O /tmp/gdb-9.2.tar.gz && \
     tar -zxf /tmp/gdb-9.2.tar.gz -C /tmp/ && \
     cd /tmp/gdb-9.2/ && \
-    mkdir /tmp/gdb-9.2/build && cd build/ && ../configure --with-python=python3 && make && make install && \
+    mkdir /tmp/gdb-9.2/build && cd build/ && ../configure --with-python=python && make && make install && \
     rm -rf gdb-9.2.tar.gz gdb-9.2/ && \
-    DEBIAN_FRONTEND=noninteractive apt-get remove -y texinfo python3-dev libncurses-dev libmpfr-dev && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
-RUN git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
+RUN apt-get update && \
+    git clone https://github.com/longld/peda.git ~/peda && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
-    sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
