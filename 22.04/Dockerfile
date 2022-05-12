@@ -93,7 +93,7 @@ RUN apt-get update && \
 
 # gdb plugin
 RUN apt-get update && \
-    apt-get install -y gdb ltrace strace && \
+    apt-get install -y gdb ltrace strace file && \
     git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
     sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
