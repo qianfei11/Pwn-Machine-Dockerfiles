@@ -1,8 +1,9 @@
 FROM ubuntu:18.04
+ARG DEBIAN_FRONTEND=noninteractive
 
 # update apt source
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal && \
+    apt-get install -y vim tmux git make cmake lxterminal && \
     echo "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
@@ -52,8 +53,9 @@ setw -g allow-rename off" > ~/.tmux.conf && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install environment
-RUN dpkg --add-architecture i386 && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
     nasm python \
     build-essential \
     python-dev python-pip python-setuptools \
@@ -67,7 +69,8 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ohmyzsh
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
+RUN apt-get update && \
+    apt-get install -y zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
@@ -83,14 +86,14 @@ RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python get-pip.py && rm
 
 # ruby
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby ruby-dev && \
+    apt-get install -y ruby ruby-dev && \
     gem install one_gadget seccomp-tools && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y texinfo python3 python3-dev libncurses-dev libmpfr-dev && \
+    apt-get install -y ltrace strace texinfo python3 python3-dev libncurses-dev libmpfr-dev && \
     wget https://ftp.gnu.org/gnu/gdb/gdb-9.2.tar.gz -O /tmp/gdb-9.2.tar.gz && \
     tar -zxf /tmp/gdb-9.2.tar.gz -C /tmp/ && \
     cd /tmp/gdb-9.2/ && \

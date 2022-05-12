@@ -1,8 +1,9 @@
 FROM ubuntu:16.04
+ARG DEBIAN_FRONTEND=noninteractive
 
 # update apt source
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y vim tmux git make cmake lxterminal software-properties-common && \
+    apt-get install -y vim tmux git make cmake lxterminal software-properties-common && \
     echo "syntax enable\n\
 filetype plugin indent on\n\
 set omnifunc=syntaxcomplete#Complete\n\
@@ -52,8 +53,9 @@ setw -g allow-rename off" > ~/.tmux.conf && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install environment
-RUN dpkg --add-architecture i386 && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
     nasm python \
     build-essential \
     python-dev python-pip python-setuptools \
@@ -68,7 +70,8 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ohmyzsh
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y zsh curl wget && \
+RUN apt-get update && \
+    apt-get install -y zsh curl wget && \
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo "\nzstyle ':omz:update' mode disabled" >> ~/.zshrc && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
@@ -83,18 +86,19 @@ RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python get-pip.py && rm
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ruby
-RUN apt-add-repository -y ppa:brightbox/ruby-ng && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev && \
+RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
+    apt-get update && \
+    apt-get install -y ruby2.4 ruby2.4-dev && \
     gem install one_gadget seccomp-tools && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # gdb plugin
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gdb && \
+RUN apt-get update && \
+    apt-get install -y gdb ltrace strace && \
     wget https://bootstrap.pypa.io/pip/3.5/get-pip.py && python3 get-pip.py && rm -f get-pip.py && \
-    git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
+    git clone https://github.com/scwuaptx/peda.git ~/peda && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
-    sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
