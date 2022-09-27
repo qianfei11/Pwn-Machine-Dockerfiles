@@ -1,8 +1,9 @@
-FROM ubuntu
+FROM ubuntu:20.10
 ARG DEBIAN_FRONTEND=noninteractive
 
 # update apt source
-RUN apt-get update && \
+RUN sed -i -re 's/([a-z]{2}\.)?archive.ubuntu.com|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list && \
+    apt-get update && \
     apt-get install -y vim tmux git make cmake lxterminal && \
     echo "syntax enable\n\
 filetype plugin indent on\n\
@@ -94,27 +95,11 @@ RUN apt-get update && \
 # gdb plugin
 RUN apt-get update && \
     apt-get install -y gdb ltrace strace file && \
-    wget -O ~/.gdbinit-gef.py -q https://gef.blah.cat/dev && \
-    echo "source ~/.gdbinit-gef.py" >> ~/.gdbinit && \
-    python3 -m pip install --no-cache-dir keystone-engine ropper z3-solver -U && \
+    git clone https://github.com/pwndbg/pwndbg.git ~/pwndbg && cd ~/pwndbg/ && ./setup.sh && \
+    git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
+    sed -i 's/peda\/peda\.py/pwndbg\/gdbinit\.py/g' ~/.gdbinit && \
     apt-get clean && apt-get autoclean && apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# pwninit
-RUN apt-get update && \
-    apt-get install -y patchelf cargo libssl-dev liblzma-dev pkg-config elfutils && \
-    cargo install pwninit && \
-    echo "\nexport PATH='$HOME/.cargo/bin:$PATH'\nalias pwninit='pwninit --template-path /etc/pwninit/exp.py --template-bin-name elf'" >> ~/.zshrc && \
-    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# other tools
-RUN apt-get update && \
-    apt-get install -y ncat && \
-    apt-get clean && apt-get autoclean && apt-get -y autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-COPY ./exp.py /etc/pwninit/exp.py
 
 ENV LANG C.UTF-8
 
