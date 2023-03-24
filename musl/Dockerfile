@@ -69,9 +69,10 @@ RUN apk update && apk add --no-cache ruby ruby-dev && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 # gdb plugin
-RUN apk update && apk add --no-cache gdb && \
+RUN apk update && apk add --no-cache gdb musl-dbg && \
     git clone https://github.com/longld/peda.git ~/peda && \
     git clone https://github.com/scwuaptx/Pwngdb.git ~/Pwngdb && cp ~/Pwngdb/.gdbinit ~/ && \
+    git clone https://github.com/xf1les/muslheap.git ~/muslheap && echo "source ~/muslheap/muslheap.py" >> ~/.gdbinit && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/lib/apk/* /etc/apk/cache/*
 
 ENV LANG C.UTF-8
